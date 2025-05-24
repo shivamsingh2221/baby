@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 
+// Dynamically load all images from the folder
 const images = import.meta.glob("./assets/images/*.{jpg,jpeg,png}", {
   eager: true,
 });
@@ -12,6 +13,7 @@ export default function GirlfriendTribute() {
   const slideIntervalRef = useRef(null);
   const audioRef = useRef(null);
 
+  // Slideshow functions
   const goToNext = () => {
     setIndex((i) => (i + 1) % imageUrls.length);
     resetSlideTimer();
@@ -29,6 +31,7 @@ export default function GirlfriendTribute() {
     }, 3000);
   };
 
+  // Heart animation & auto slide init
   useEffect(() => {
     const heartInterval = setInterval(() => {
       const heart = document.createElement("div");
@@ -46,6 +49,7 @@ export default function GirlfriendTribute() {
     };
   }, []);
 
+  // Audio controls
   const playAudio = () => {
     if (audioRef.current) {
       audioRef.current.play();
@@ -61,6 +65,9 @@ export default function GirlfriendTribute() {
 
   return (
     <div className="tribute">
+      {/* ✅ Always mounted so ref is valid */}
+      <audio ref={audioRef} src="/gustakhi_song.mp3" preload="auto" />
+
       <img
         src={imageUrls[index]}
         alt="Us"
@@ -69,6 +76,7 @@ export default function GirlfriendTribute() {
         style={{ cursor: "pointer" }}
         onError={(e) => (e.target.style.display = "none")}
       />
+
       <div className="buttons">
         <button onClick={goToPrev}>← </button>
         <button onClick={goToNext}> →</button>
@@ -83,12 +91,6 @@ export default function GirlfriendTribute() {
         💌 💌 If Angry then Click HERE 💌 💌
       </button>
 
-      <audio
-        ref={audioRef}
-        src="/src/assets/audio/gustakhi_song.mp3"
-        preload="auto"
-      />
-
       {showModal && (
         <div
           className="modal-overlay"
@@ -102,7 +104,8 @@ export default function GirlfriendTribute() {
             <p className="message">
               I know I might have hurt you at times, and for that, I'm truly
               sorry. You mean the world to me, and I never want to lose you.
-              Please forgive me. 💗 <br></br>
+              Please forgive me. 💗
+              <br></br>
               Here's a special बेसुरा song for my prettiest girl in the world.
             </p>
             <div className="audio-controls">
@@ -125,6 +128,40 @@ export default function GirlfriendTribute() {
           </div>
         </div>
       )}
+
+      {/* CSS-in-JS for heart animation */}
+      <style>{`
+        .heart {
+          position: fixed;
+          width: 20px;
+          height: 20px;
+          background-color: pink;
+          transform: rotate(45deg);
+          animation: float 3s linear infinite;
+          top: 100%;
+        }
+        .heart::before,
+        .heart::after {
+          content: "";
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          background-color: pink;
+          border-radius: 50%;
+        }
+        .heart::before {
+          top: -10px;
+          left: 0;
+        }
+        .heart::after {
+          left: -10px;
+          top: 0;
+        }
+        @keyframes float {
+          0% { transform: translateY(0) rotate(45deg); opacity: 1; }
+          100% { transform: translateY(-100vh) rotate(45deg); opacity: 0; }
+        }
+      `}</style>
     </div>
   );
 }
